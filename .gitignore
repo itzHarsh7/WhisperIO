@@ -1,0 +1,46 @@
+# Node.js dependencies
+node_modules/
+
+# Production and distribution builds
+dist/
+build/
+out/
+
+# Logs and diagnostics
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS-specific metadata files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.project
+.classpath
+.settings/
+
+# Local configuration & environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+config.local.json
+
+# Optional npm cache and history
+.npm
+.eslintcache
+.node_repl_history

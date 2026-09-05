@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI STT Agent</title>
+  <!-- Import Outfit and Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- FLOATING APP CONTAINER -->
+  <div id="app-container" class="app-idle">
+    
+    <!-- Drag Handle at the top -->
+    <div class="drag-handle"></div>
+
+    <!-- Mini Pill Indicator (Visible only when contracted) -->
+    <div class="mini-indicator">
+      <span class="mini-pulse"></span>
+      <span class="mini-label">Dictate</span>
+    </div>
+
+    <!-- MAIN CONTROL BAR -->
+    <div class="main-bar">
+      
+      <!-- Mic Trigger Button -->
+      <button id="mic-btn" class="control-btn" title="Toggle Recording (Ctrl+Shift+Space)">
+        <div class="glow-ring"></div>
+        <svg class="icon-mic" viewBox="0 0 24 24" width="24" height="24">
+          <path fill="currentColor" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+        </svg>
+        <svg class="icon-stop hidden" viewBox="0 0 24 24" width="24" height="24">
+          <path fill="currentColor" d="M6 6h12v12H6V6z"/>
+        </svg>
+      </button>
+
+      <!-- Content Area (Status, Timer, Visualizer) -->
+      <div class="content-area">
+        <div id="status-container">
+          <span id="status-text">Ready to record</span>
+          <span id="timer" class="hidden">00:00</span>
+        </div>
+        <!-- Real-time Canvas Waveform Visualizer -->
+        <canvas id="waveform" width="140" height="28" class="hidden"></canvas>
+      </div>
+
+      <!-- Controls (Pin, Settings, Close) -->
+      <div class="right-controls">
+        <!-- Pin Button -->
+        <button id="pin-btn" class="icon-btn" title="Pin Always on Top">
+          <svg viewBox="0 0 24 24" width="16" height="16">
+            <path fill="currentColor" d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2zM9.8 4h4.4v8H9.8V4z"/>
+          </svg>
+        </button>
+        <!-- Settings Gear Button -->
+        <button id="settings-btn" class="icon-btn" title="Settings">
+          <svg viewBox="0 0 24 24" width="16" height="16">
+            <path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+          </svg>
+        </button>
+        <!-- Hide Button -->
+        <button id="hide-btn" class="icon-btn" title="Hide Overlay">
+          <svg viewBox="0 0 24 24" width="16" height="16">
+            <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- SETTINGS PANEL (EXPANDED AREA) -->
+    <div id="settings-panel" class="hidden">
+      <div class="settings-header">
+        <h3>Configuration</h3>
+      </div>
+      
+      <div class="settings-body">
+        
+        <!-- Groq API Key -->
+        <div class="form-group">
+          <label for="api-key">Groq API Key</label>
+          <div class="input-wrapper">
+            <input type="password" id="api-key" placeholder="gsk_...">
+            <button id="toggle-api-key" class="text-btn">Show</button>
+          </div>
+          <small>Get a free key from <a href="https://console.groq.com/keys" target="_blank" id="groq-link">Groq Console</a></small>
+        </div>
+
+        <!-- Model and Audio Source Row -->
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="model-select">AI Transcription Model</label>
+            <select id="model-select">
+              <option value="whisper-large-v3">Whisper Large v3 (Multilingual)</option>
+              <option value="distil-whisper-large-v3-en">Distil Whisper English (Faster)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Audio Device Row -->
+        <div class="form-group">
+          <label for="audio-select">Microphone Source</label>
+          <select id="audio-select">
+            <!-- Populated dynamically via JS -->
+            <option value="default">System Default</option>
+          </select>
+        </div>
+
+        <!-- Theme Selection Row -->
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="theme-select">UI Color Theme</label>
+            <select id="theme-select">
+              <option value="purple">🟣 Cyber Purple (Default)</option>
+              <option value="sunset">🌅 Sunset Glow (Orange & Amber)</option>
+              <option value="emerald">💚 Emerald Matrix (Teal & Mint)</option>
+              <option value="ocean">🌊 Ocean Sapphire (Cyan & Cobalt)</option>
+              <option value="monochrome">🖤 Obsidian Glass (Pure Dark)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Text Case Transformation Row -->
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="casing-select">Text Case Transformation</label>
+            <select id="casing-select">
+              <option value="default">Original Transcription</option>
+              <option value="lowercase">lowercase text</option>
+              <option value="uppercase">UPPERCASE TEXT</option>
+              <option value="titlecase">Title Case Formatting</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Keyboard Shortcut and Settings Row -->
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="shortcut-input">Global Keyboard Shortcut</label>
+            <input type="text" id="shortcut-input" placeholder="Ctrl+Shift+Space" readonly>
+            <small class="hint">Click inside box and press keys to record new hotkey</small>
+          </div>
+        </div>
+
+        <!-- Toggle Controls -->
+        <div class="form-toggles">
+          <label class="toggle-control">
+            <input type="checkbox" id="clean-stutters-toggle" checked>
+            <span class="control-indicator"></span>
+            <span class="toggle-label">
+              <strong>AI Smart Clean-up</strong>
+              <span>Remove stutters, filler words (um, uh) & repeated phrases</span>
+            </span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="autopaste-toggle" checked>
+            <span class="control-indicator"></span>
+            <span class="toggle-label">
+              <strong>Auto-Paste in Active App</strong>
+              <span>Automatically types text at mouse cursor position</span>
+            </span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="copy-clipboard-toggle" checked>
+            <span class="control-indicator"></span>
+            <span class="toggle-label">
+              <strong>Copy to Clipboard</strong>
+              <span>Always save transcribed text to system clipboard (Ctrl+V)</span>
+            </span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="sound-toggle" checked>
+            <span class="control-indicator"></span>
+            <span class="toggle-label">
+              <strong>Premium Sound Cues</strong>
+              <span>Play subtle sound cues on start and success</span>
+            </span>
+          </label>
+        </div>
+
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="settings-footer">
+        <button id="btn-cancel" class="btn secondary-btn">Cancel</button>
+        <button id="btn-save" class="btn primary-btn">Save Changes</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- AUDIO ELEMENTS FOR PREMIUM UX FEEDBACK -->
+  <audio id="snd-start" src="data:audio/wav;base64,UklGRjYAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQIAAAAAAABf"></audio>
+  <audio id="snd-success" src="data:audio/wav;base64,UklGRjYAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQIAAAAAAABf"></audio>
+
+  <!-- Load Renderer JS -->
+  <script src="renderer.js"></script>
+</body>
+</html>

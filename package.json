@@ -1,0 +1,33 @@
+{
+  "name": "whisper-io",
+  "version": "1.0.3",
+  "description": "Dynamic Island AI Dictation Capsule for Windows powered by Groq & Whisper",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:exe": "electron-packager . WhisperIO --platform=win32 --arch=x64 --out=dist --ignore=dist --overwrite",
+    "build:installer": "node create-installer.js"
+  },
+  "keywords": [
+    "electron",
+    "speech-to-text",
+    "groq",
+    "whisper",
+    "windows",
+    "overlay"
+  ],
+  "author": "Harsh",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itzHarsh7/WhisperIO.git"
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-packager": "^17.1.2",
+    "electron-winstaller": "^5.4.0"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1"
+  }
+}
