@@ -8,7 +8,7 @@
 
 ### Option 1: Windows Setup Installer (Recommended)
 1. Go to the [**WhisperIO Releases Page**](https://github.com/itzHarsh7/WhisperIO/releases).
-2. Download **`WhisperIOSetup.exe`**.
+2. Download [**`WhisperIOSetup.exe`**](https://github.com/itzHarsh7/WhisperIO/releases/download/v1.0.3/WhisperIOSetup.exe).
 3. Double-click the installer. It will automatically install WhisperIO cleanly on your system and create a shortcut on your **Windows Desktop** and inside your **Start Menu**.
 
 ### Option 2: Standalone Portable Build
